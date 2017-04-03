@@ -1,9 +1,14 @@
 ---
 driver:
-  name: vagrant
+  name: docker
+  use_sudo: false
+  username: root
 
 provisioner:
-  name: chef_solo
+  name: chef_zero
+
+verifier:
+  name: inspec
 
 platforms:
   - name: ubuntu-12.04
@@ -13,7 +18,15 @@ platforms:
   - name: centos-7.2
 
 suites:
-  - name: default
+  - name: install
     run_list:
-      - recipe[jabba::default]
+      - recipe[jabba-integration-suite::install]
+    attributes:
+  - name: install_and_delete
+    run_list:
+      - recipe[jabba-integration-suite::install_and_delete]
+    attributes:
+  - name: install_java
+    run_list:
+      - recipe[jabba-integration-suite::install_java]
     attributes:

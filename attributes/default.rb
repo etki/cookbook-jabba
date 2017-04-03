@@ -1,0 +1,1 @@
+default['jabba']['version'] = 'latest'

@@ -4,7 +4,7 @@ This project is a work-in-progress and not yet ready for production.
 
 # jabba Cookbook
 
-Installs [Jabba][jabba] - java version manager.
+Installs [Jabba][jabba] - Java version manager.
 
 ## Requirements
 
@@ -25,73 +25,63 @@ trivial and should work nearly anywhere.
 
 ### jabba
 
-Installs Jabba for target user at target location. If user is not set,
-performs global installation (by default in `/usr/local/share/jabba`) 
-and symlinks the binary to `/usr/local/bin/jabba`. This is not (yet)
-suited for Windows, of course.
+Installs Jabba for target user.
 
 ```ruby
 jabba 'latest' do
   version 'latest'
   user 'etki'
-  directory '.jabba'
   action :install, :delete
 end
 ```
 
-| Attribute   | Constraints                        | Default       | Explanation |
-|:------------|:-----------------------------------|:--------------|:------------|
-| `version`   | Existing Jabba version             | `latest`      | Jabba version to install |
-| `user`      | Existing user or nil               | nil           | User JDK will be installed for |
-| `directory` |                                    | `.jabba` or `/usr/local/share/jabba`  | Directory for Jabba root, will be created automatically |
-| `action`    | `:install` or `:delete`            | `:install`    | |
+| Attribute   | Constraints                        | Default       | Explanation                     |
+|:------------|:-----------------------------------|:--------------|:--------------------------------|
+| `version`   | Existing Jabba version or 'latest' | Resource name | Jabba version to install        |
+| `user`      | Existing user                      |               | User Java will be installed for |
+| `action`    | `:install` or `:delete`            | `:install`    |                                 |
 
-### jabba_jdk
+### jabba_java
 
-Installs JDK for target user. If user is not set, it will perform 
-global installation.
+Installs Java for target user.
 
 **NB:** Jabba for specified user has to be installed in advance.
 This may change in the future
 
 ```ruby
-jabba_jdk '1.8' do
+jabba_java '1.8' do
   version 'zulu@1.8'
   url 'tgz+http://example.com/distribution.tar.gz'
   user 'etki'
-  directory '.jabba'
   action :install, :delete
 end
 ```
 
-| Attribute   | Constraints                        | Default       | Explanation |
-|:------------|:-----------------------------------|:--------------|:------------|
-| `version`   | Jabba-compatible JDK version       | Resource name | JDK version to install |
-| `url`       | See [Jabba readme][jabba]          | nil           | Custom installer URL|
-| `user`      | Existing user or nil               | nil           | User JDK will be installed for |
-| `directory` | Directory where Jabba is installed | `.jabba`      | Directory with Jabba, relative to user home or absolute |
-| `action`    | `:install` or `:delete`            | `:install`    | |
+| Attribute   | Constraints                   | Default       | Explanation                     |
+|:------------|:------------------------------|:--------------|:--------------------------------|
+| `version`   | Jabba-compatible Java version | Resource name | Java version to install         |
+| `url`       | See [Jabba readme][jabba]     | nil           | Custom install URL              |
+| `user`      | Existing user                 |               | User Java will be installed for |
+| `action`    | `:install` or `:delete`       | `:install`    |                                 |
 
 ### jabba_default
 
-Sets or removes default JDK version. Basically just a wrapper around
+Sets or removes default Java version. Basically just a wrapper around
 `jabba_alias`.
 
 ```ruby
 jabba_default '1.6.65' do
   version '1.6.65'
   user 'etki'
-  directory '.jabba'
-  action :set, :unset
+  action :create, :delete
 end
 ```
 
-| Attribute   | Constraints                             | Default       | Explanation |
-|:------------|:----------------------------------------|:--------------|:------------|
-| `version`   | Jabba-compatible JDK version            | Resource name | JDK version to set as default |
-| `user`      | Existing user or nil                    | nil           | Target user |
-| `directory` | Directory where user Jabba is installed | `.jabba`      | Directory with Jabba, relative to user home or absolute |
-| `action`    | `:set` or `:unset`                      | `:set`        | |
+| Attribute   | Constraints                   | Default       | Explanation                    |
+|:------------|:------------------------------|:--------------|:-------------------------------|
+| `version`   | Jabba-compatible Java version | Resource name | Java version to set as default |
+| `user`      | Existing user or nil          | nil           | Target user                    |
+| `action`    | `:create` or `:delete`        | `:create`     |                                |
 
 ### jabba_alias
 
@@ -101,18 +91,16 @@ Sets or removes Jabba alias.
 jabba_alias 'default' do
   version '1.6.65'
   user 'etki'
-  directory '.jabba'
   action :create, :delete
 end
 ```
 
-| Attribute   | Constraints                              | Default       | Explanation |
-|:------------|:-----------------------------------------|:--------------|:------------|
-| `name`      |                                          | Resource name | Alias name  |
-| `version`   | Existing Jabba JDK installation          | | |
-| `user`      | Existing user or nil                     | nil           | User JDK will be installed for |
-| `directory` | Directory where user Jabba is installed  | `.jabba`      | Directory with Jabba, relative to user home or absolute |
-| `action`    | `:create` or `:delete`                   | `:create`     | |
+| Attribute   | Constraints                      | Default       | Explanation                  |
+|:------------|:---------------------------------|:--------------|:-----------------------------|
+| `name`      |                                  | Resource name | Alias name                   |
+| `version`   | Existing Jabba Java installation |               |                              |
+| `user`      | Existing user                    |               | User Java will be linked for |
+| `action`    | `:create` or `:delete`           | `:create`     |                              |
 
 ### jabba_link
 
@@ -121,18 +109,16 @@ jabba_link 'system@1.8.72' do
   version 'system@1.8.72'
   target '/Library/Java/JavaVirtualMachines/jdk1.8.0_72.jdk'
   user 'etki'
-  directory '.jabba'
   action :create, :delete
 end
 ```
 
-| Attribute   | Constraints                             | Default       | Explanation |
-|:------------|:----------------------------------------|:--------------|:------------|
-| `version`   | Jabba-compatible JDK version name       | Resource name | |
-| `target`    | Existing non-Jabba JDK installation     |               | |
-| `user`      | Existing user or nil                    | nil           | User JDK will be installed for |
-| `directory` | Directory where user Jabba is installed | `.jabba`      | Directory with Jabba, relative to user home or absolute |
-| `action`    | `:create` or `:delete`                  | `:create`     | |
+| Attribute   | Constraints                          | Default       | Explanation                     |
+|:------------|:-------------------------------------|:--------------|:--------------------------------|
+| `version`   | Jabba-compatible Java version name   | Resource name | Java name in Jabba              |
+| `target`    | Existing non-Jabba Java installation |               | Link target                     |
+| `user`      | Existing user                        |               | User Java will be installed for |
+| `action`    | `:create` or `:delete`               | `:create`     |                                 |
 
 ## Recipes
 
@@ -143,27 +129,14 @@ predefined recipes.
 Recipes use attributes with following structure:
 
 ```yml
-system:
-  directory: /usr/local/share/jabba
-  install: '0.6.1'
-  jdk:
-    - zulu@1.7
-    - zulu@1.8
-  default_jdk: zulu@1.7
-  alias:
-    1.7: zulu@1.7
-    1.8: zulu@1.8
-  link:
-    system@1.8.72: /Library/Java/JavaVirtualMachines/jdk1.8.0_72.jdk
 user:
   etki:
-    directory: .jabba
     install: latest
-    jdk:
+    java:
       - zulu@1.6
       - zulu@1.7
       - zulu@1.8
-    default_jdk: zulu@1.8
+    default: zulu@1.8
     alias:
       1.6: zulu@1.6
       1.7: zulu@1.7
@@ -171,41 +144,34 @@ user:
     link: [] # empty array could be omitted, shown for clarity
 ```
 
-Each key in structure (in `system` or `user.%user%` section) 
-corresponds with same-named recipe. Every attribute is optional and 
-be set to noop default if not present.
+Each key in structure under `user.%user%` section corresponds with 
+same-named recipe. Every attribute is optional and would be set to 
+noop default if not present.
 
 ### jabba::default
 
-Simply runs `jabba::install`, `jabba::jdk`, `jabba::default_jdk`, 
+Simply runs `jabba::install`, `jabba::java`, `jabba::default_java`, 
 `jabba::alias` and `jabba::link` one by one.
 
 ### jabba::install
 
-Installs Jabba version specified in `system.install` and 
-`user.%user%.install` attributes.
+Installs Jabba version specified in `user.%user%.install` attributes.
 
-User may 
+### jabba::java
 
-### jabba::jdk
+Installs Java versions specified in `user.%user%.java` attributes.
 
-Installs JDKs specified in `system.jdk` and `user.%user%.jdk` 
-attributes.
+### jabba::default_java
 
-### jabba::default_jdk
-
-Sets JDK versions specified in `system.default_jdk` and 
-`user.%user%.default_jdk` attributes.
+Sets Java versions specified in `user.%user%.default` attributes.
 
 ### jabba::alias
 
-Sets JDK aliases specified in `system.alias` and `user.%user%.alias`
-attributes.
+Sets Java aliases specified in `user.%user%.alias` attributes.
 
-### jabba:link
+### jabba::link
 
-Sets JDK links specified in `system.link` and `user.%user%.link` 
-attributes.
+Sets Java links specified in `user.%user%.link` attributes.
 
 ## Conventions
 
