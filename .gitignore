@@ -1,0 +1,11 @@
+# IDE Files
+.idea
+
+# Integration Files
+.kitchen/
+.kitchen.local.yml
+.vagrant
+.chef
+Berksfile.lock
+
+# Build Artifacts
